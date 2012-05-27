@@ -1,34 +1,48 @@
-(ns spirograph.core
+(ns spirograph.tryme
   (:use quil.core))
 
-(def h 400)
-(def w 400)
-(def r0 120)
-(def r1 40)
-(def w0 1)
-(def w1 (* -0.5 w0 (/ r1 r0)))
+(defn make-spirograph-fn
+  "Returns a function that computes the position of the pencil at time
+  `t` for a spirograph with outer circle of radius `R`. The parameter
+  0 <= `k` <= 1 specifies the size of the inner circle with respect to
+  the outer one, and 0 <= `l` <= 1 how far the pencil is from the
+  cetre of the inner circle. See
+  http://en.wikipedia.org/wiki/Spirograph#Mathematical_basis for a
+  full explanation."
+  [R k l]
+  (fn
+    [t]
+    (let [x (* R (+ (* (- 1 k) (cos t))
+                    (* l k (cos (* (/ (- 1 k) k) t)))))
+          y (* R (- (* (- 1 k) (sin t))
+                    (* l k (sin (* (/ (- 1 k) k) t)))))]
+      [x y])))
 
-(defn setup
-  []
-  (smooth)
-  (stroke-weight 1)
-  (set-state! :p (atom [(/ w 2) (+ (/ h 2) r0 r1)]))
-  (frame-rate 50))
+(defn my-translate
+  "Returns a function that displaces a point within the display
+  window. TODO: can quil.core/translate be used instead?"
+  [delta-x delta-y]
+  (fn [[x y]]
+    [(+ x delta-x) (+ y delta-y)]))
 
-(defn draw
-  []
-  (let [c (frame-count)
-        x (+ (/ w 2)
-             (* r0 (sin (* w0 c)))
-             (* r1 (sin (* w1 c))))
-        y (+ (/ h 2)
-             (* r0 (cos (* w0 c)))
-             (* r1 (cos (* w1 c))))]
-    (line @(state :p) [x y])
-    (reset! (state :p) [x y])))
+(defn spirograph
+  "Draw a spirograph in a window of width `w` and height `h`, with
+   outer circle of radius `R` and parameters `k` and `l`"
+  ([k l]
+     (spirograph 500 500 249 k l))
+  ([w h R k l]
+     (let [f (comp (my-translate (/ w 2) (/ h  2)) (make-spirograph-fn R k l))
+           p (atom (f 0))]
+       (sketch
+        :title "Spirograph"
+        :setup (fn [] (smooth) (frame-rate 100))
+        :draw (fn [] (let [next-p (f (/ (frame-count) 5))]
+                      (line @p next-p)
+                      (reset! p next-p)))
+        :size [w h]))))
 
-(defsketch spirograph
-  :title "Spirograph"
-  :setup setup
-  :draw draw
-  :size [w h])
+(comment
+  (spirograph 0.505 0.6)
+  (spirograph 0.33 0.9)
+  (spirograph 0.636 0.8)
+  (spirograph 1.23 0.5))
