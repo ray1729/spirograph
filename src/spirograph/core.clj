@@ -1,4 +1,4 @@
-(ns spirograph.tryme
+(ns spirograph.core
   (:use quil.core))
 
 (defn make-spirograph-fn
