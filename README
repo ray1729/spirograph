@@ -1,0 +1,17 @@
+# spirograph
+
+A simple spirograph implementation using quil.
+
+See http://en.wikipedia.org/wiki/Spirograph
+
+## Usage
+
+  (use 'spirograph.core)
+
+  (spirograph 0.636 0.8)
+
+## License
+
+Copyright (C) 2012 Ray Miller <ray@1729.org.uk>
+
+Distributed under the Eclipse Public License, the same as Clojure.
