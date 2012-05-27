@@ -6,7 +6,7 @@
   `t` for a spirograph with outer circle of radius `R`. The parameter
   0 <= `k` <= 1 specifies the size of the inner circle with respect to
   the outer one, and 0 <= `l` <= 1 how far the pencil is from the
-  cetre of the inner circle. See
+  centre of the inner circle. See
   http://en.wikipedia.org/wiki/Spirograph#Mathematical_basis for a
   full explanation."
   [R k l]
